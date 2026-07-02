@@ -1,0 +1,31 @@
+{
+  "methodology": "Class-stratified rank-based top 10%: sort by ['p_arb','accession'] (deterministic tie-breaking), take head(int(N*0.10))",
+  "source_data": "data/windows_predictions_FIXED_SEED.csv",
+  "boundary": 0.4,
+  "n_top_arb": 5573,
+  "n_top_isv": 424,
+  "panel_B": {
+    "ARB_peak_height": 1.79,
+    "ARB_peak_position": 0.38,
+    "ISV_peak_height": 2.5,
+    "ISV_peak_position": 0.57
+  },
+  "panel_C": {
+    "ARB_Other_pct": 47.3,
+    "ARB_NS3NS5_pct": 65.5,
+    "ARB_Other_n": 1333,
+    "ARB_NS3NS5_n": 1844,
+    "ARB_total_genomes": 2816,
+    "ISV_Other_pct": 35.3,
+    "ISV_NS3NS5_pct": 33.0,
+    "ISV_Other_n": 76,
+    "ISV_NS3NS5_n": 71,
+    "ISV_total_genomes": 215
+  },
+  "rounded_to_whole_percent_for_publication": {
+    "ARB_Other": 47,
+    "ARB_NS3NS5": 65,
+    "ISV_Other": 35,
+    "ISV_NS3NS5": 33
+  }
+}

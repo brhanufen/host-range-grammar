@@ -1,0 +1,14 @@
+# Core analysis + figure reproduction
+numpy>=1.24.0
+scipy>=1.10.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+umap-learn>=0.5.3
+biopython>=1.81
+
+# Only required to regenerate embeddings from scratch (scripts/04_embed_windows.py).
+# Pre-computed embeddings are provided in embeddings/, so these are optional for
+# reproducing all results, tables, and figures.
+transformers>=4.30.0
+torch>=2.0.0

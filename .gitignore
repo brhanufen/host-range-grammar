@@ -1,0 +1,21 @@
+# ── Large data files — hosted on Zenodo, not GitHub ─────────────────────
+# GitHub rejects files >100 MB and warns above 50 MB. These live in the
+# permanent Zenodo archive (DOI in README). Download them there to run the
+# full pipeline / verify_reproducibility.py.
+# embeddings_combined.npy is 176 MB; windows_sequences.csv is 58 MB.
+embeddings/embeddings_combined.npy
+data/windows_sequences.csv
+
+# ── OS / editor cruft ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# ── Python ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/

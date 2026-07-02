@@ -1,0 +1,32 @@
+{
+  "methodology": "Genome-level mean-pool of DNABERT-2 window embeddings, excluding masked windows; balanced logistic regression, species-grouped 5-fold CV at genome level, SEED=42",
+  "n_genomes": 3031,
+  "n_windows": 59980,
+  "conditions": {
+    "baseline": {
+      "AP_mean": 0.9997343947682769,
+      "AP_std": 0.0005258967093694203,
+      "delta_AP_pp": 0.0,
+      "n_masked": 0
+    },
+    "top5_per_genome": {
+      "AP_mean": 0.9996981377434357,
+      "AP_std": 0.0005984087952442613,
+      "delta_AP_pp": -0.003625702484111315,
+      "n_masked": 3224
+    },
+    "random5_per_genome": {
+      "AP_mean": 0.9997330761241285,
+      "AP_std": 0.0005302848757623162,
+      "delta_AP_pp": -0.0001318644148318171,
+      "n_masked": 3031
+    },
+    "auuagg_containing": {
+      "AP_mean": 0.9996958807575711,
+      "AP_std": 0.0005940510263672159,
+      "delta_AP_pp": -0.0038514010705759105,
+      "n_masked": 4454
+    }
+  },
+  "script": "scripts/12_ablation_repro.py"
+}
