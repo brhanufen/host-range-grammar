@@ -87,28 +87,24 @@ provided as a static image; it is not computationally generated.*
 | Window size / stride | 1,000 bp / 500 bp (50% overlap) |
 | Embedding dimensions | 768 (DNABERT-2) |
 
-## Large data files (Zenodo)
+## Large data files
 
-Two files exceed GitHub's size limits and are hosted in the permanent Zenodo
-archive rather than this repository. Download them from Zenodo and place them
-at the paths shown before running `verify_reproducibility.py` or the
-from-scratch pipeline:
+Two files are large and are provided in full in the permanent Zenodo archive:
 
-| File | Size | Destination |
-|------|------|-------------|
+| File | Size | Path |
+|------|------|------|
 | `embeddings_combined.npy` | 176 MB | `embeddings/embeddings_combined.npy` |
 | `windows_sequences.csv` | 58 MB | `data/windows_sequences.csv` |
 
-> **Zenodo archive:** DOI `[RESERVED-DOI-HERE]` (complete package incl. large data).
-
-All other files (scripts, figures, results, small data tables, manuscript) are
-included in this repository.
+This Zenodo deposit is the complete, self-contained archive: all files above are
+included here, so `verify_reproducibility.py` and the full pipeline run directly
+after unpacking. (The companion GitHub repository omits these two files for size
+reasons and links back to this archive to obtain them.)
 
 ## Quick start
 
 ```bash
 pip install -r requirements.txt
-# First download the two large data files from Zenodo (see section above).
 python verify_reproducibility.py        # 21/21 checks should pass
 ```
 
@@ -201,7 +197,6 @@ python scripts/12_ablation_repro.py
 
 ## Repository contents
 
-- `Flavivirus_Manuscript_FINAL.docx` — the manuscript
 - `figures/` — Figures 1–7 (PDF + PNG, 600 DPI)
 - `scripts/` — full analysis pipeline (01–16) plus figure generators (`scripts/figures/`) and utilities (`scripts/utils/`)
 - `data/` — accession lists, metadata, window sequences and predictions
@@ -220,7 +215,14 @@ underlying data or numeric values changed; all reproducibility outputs are unaff
 
 ## Citation
 
-[To be added upon publication]
+If you use this archive, please cite the Zenodo deposit:
+
+> Znabu, B. F., Yao, Q., & Sexton, N. R. (2026). Deciphering the Host-Range Grammar of Orthoflaviviruses Using Foundation Model Embeddings: A Leakage-Aware Evaluation Framework — Data and Code. Zenodo. https://doi.org/10.5281/zenodo.21209701
+
+- Concept DOI (all versions): https://doi.org/10.5281/zenodo.21209701
+- This version: https://doi.org/10.5281/zenodo.21209702
+
+The associated manuscript citation will be added upon publication.
 
 ## Contact
 
