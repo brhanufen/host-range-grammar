@@ -41,7 +41,7 @@ checker (`verify_reproducibility.py`) confirms 21/21 key values.
 │   ├── motif_enrichment_full.csv         # 4,095 6-mer enrichment results (Fig 5, Table 1)
 │   ├── oof_predictions.npz               # Out-of-fold predictions (Fig 2)
 │   ├── figure4_final_repro.json          # Expected Figure 4 values (reference)
-│   ├── motif_scorer_results_repro.json   # Transparent motif-scorer CV output
+│   ├── motif_scorer_results_repro.json   # Interpretable motif-scorer CV output
 │   └── hotspot_stability_repro.json      # Positional-hotspot stability check
 ├── scripts/
 │   ├── 01_fetch_sequences.py             # Download genomes from NCBI
@@ -54,7 +54,7 @@ checker (`verify_reproducibility.py`) confirms 21/21 key values.
 │   ├── 08_motif_enrichment.py            # 6-mer motif enrichment
 │   ├── 09_ablation_studies.py            # Ablation / robustness
 │   ├── 10_baseline_comparison.py         # Baseline-method comparison
-│   ├── 11_motif_scorer_cv.py             # Transparent motif-scorer baseline
+│   ├── 11_motif_scorer_cv.py             # Interpretable motif-scorer baseline
 │   ├── 12_ablation_repro.py              # Ablation reproduction
 │   ├── 16_species_group_sensitivity.py  # Species-group sensitivity (Unknown flavivirus)
 │   ├── utils/                            # Shared data/eval helpers
@@ -135,7 +135,7 @@ Each writes `.png` and `.pdf` into `figures/`.
 | 4 | `scripts/figures/regen_fig4_repro.py` | ARB 1.8×@0.38, ISFV 2.5×@0.57; ARB 47%/65%, ISFV 35%/33% |
 | 5 | `scripts/figures/regen_fig5_fig6.py` | AUUAGG log₂E=3.22; UpA-only 37% / CpG-only 66% by decile |
 | 6 | `scripts/figures/regen_fig5_fig6.py` | ablation \|ΔAP\|<0.01; motif-scorer 0.638/0.434 |
-| 7 | `scripts/figures/regen_fig7.py` | Top-10 motif table (= Table 1) |
+| 7 | `scripts/figures/regen_fig7.py` | Host-restriction mechanism schematic (CpG / UpA / composition) |
 
 ## Reproducing from scratch (optional)
 
