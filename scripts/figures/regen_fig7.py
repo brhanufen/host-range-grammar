@@ -3,7 +3,8 @@
 Regenerate Figure 7 (mechanistic synthesis) with:
   - Colorblind-safe palette (replace red/green pairing)
   - Updated mechanism wording ("synergy" removed; "independent but functionally overlapping")
-  - Same 2-panel layout (A: mechanism boxes; B: top-10 motif table)
+  - Single-panel layout (mechanism boxes only; former Panel B top-10 motif
+    table removed as redundant with Table 1 and Figure 5B, co-author review)
 """
 
 import shutil
@@ -71,11 +72,13 @@ def draw_box(ax, x, y, w, h, style, title, body):
 
 
 def make_figure7():
-    fig = plt.figure(figsize=(7.5, 5.6))
-    gs = fig.add_gridspec(2, 1, height_ratios=[1.3, 1.7], hspace=0.05)
-
-    # ── Panel A: Mechanism boxes ──
-    axA = fig.add_subplot(gs[0])
+    # Single-panel figure: the mechanistic schematic only. The former Panel B
+    # (top-10 motif table) duplicated Table 1 (identical motifs/columns/values)
+    # and its log2(E) column also appears in Figure 5B, so it was removed on
+    # co-author review. Quantitative motif data lives in Table 1; the visual
+    # enrichment ranking lives in Figure 5B.
+    fig = plt.figure(figsize=(7.5, 2.9))
+    axA = fig.add_subplot(1, 1, 1)
     axA.set_xlim(0, 1)
     axA.set_ylim(0, 1)
     axA.axis('off')
@@ -123,56 +126,7 @@ def make_figure7():
     draw_box(axA, 0.04 + 2*(box_w + gap), box_y, box_w, box_h, BOX_COMP,
              'Composition Bias', comp_body)
 
-    # Panel A label
-    axA.text(-0.01, 1.02, 'A', transform=axA.transAxes,
-             fontsize=14, fontweight='bold', va='top')
-
-    # ── Panel B: Top 10 motif table ──
-    axB = fig.add_subplot(gs[1])
-    axB.set_xlim(0, 1)
-    axB.set_ylim(0, 1)
-    axB.axis('off')
-
-    axB.text(0.5, 0.98, 'Top 10 Discriminative 6-mer Motifs',
-             ha='center', va='top', fontsize=10, fontweight='bold')
-
-    # Table data
-    headers = ['Motif', r'log$_2$(E)', 'Cons.\nARB', 'Cons.\nISFV', 'Peak\nPos.', 'Biological Annotation']
-    col_widths = [0.14, 0.10, 0.10, 0.10, 0.10, 0.30]
-    col_starts = [0.08]
-    for w in col_widths[:-1]:
-        col_starts.append(col_starts[-1] + w)
-
-    # Header row — taller than data rows to accommodate two-line headers
-    # (Cons.\nARB, Cons.\nISFV, Peak\nPos.) without spilling over cell borders.
-    header_y = 0.80
-    header_h = 0.10   # taller for wrapped headers
-    row_h = 0.07
-    for i, (header, x_start, w) in enumerate(zip(headers, col_starts, col_widths)):
-        # Header background (taller cell)
-        axB.add_patch(patches.Rectangle((x_start, header_y - header_h), w, header_h,
-                                         facecolor='#E5E5E5', edgecolor='#666666', linewidth=0.5))
-        axB.text(x_start + w/2, header_y - header_h/2, header,
-                 ha='center', va='center', fontsize=7, fontweight='bold',
-                 linespacing=1.1)
-
-    # Data rows — start immediately below the (taller) header row
-    data_top = header_y - header_h
-    for row_idx, row in enumerate(MOTIFS):
-        y = data_top - row_h * (row_idx + 1)
-        bg_color = '#FAFAFA' if row_idx % 2 == 0 else 'white'
-        for col_idx, (cell, x_start, w) in enumerate(zip(row, col_starts, col_widths)):
-            axB.add_patch(patches.Rectangle((x_start, y), w, row_h,
-                                             facecolor=bg_color, edgecolor='#CCCCCC',
-                                             linewidth=0.5))
-            font_family = 'monospace' if col_idx == 0 else 'Arial'
-            font_weight = 'bold' if col_idx == 0 else 'normal'
-            axB.text(x_start + w/2, y + row_h/2, cell,
-                     ha='center', va='center', fontsize=7,
-                     fontfamily=font_family, fontweight=font_weight)
-
-    axB.text(-0.01, 1.02, 'B', transform=axB.transAxes,
-             fontsize=14, fontweight='bold', va='top')
+    # (No panel letter — this is now a single-panel figure.)
 
     for fmt in ('png', 'pdf'):
         fig.savefig(f'{OUT_MAIN}/Figure7.{fmt}', dpi=600)

@@ -138,7 +138,7 @@ target_genomes = [
     ('JQ308185', 'Chaoyang virus (HLD115)', 'ISFV'),
     ('MW246770', 'Chaoyang virus (NM)', 'ISFV'),
 ]
-axA0 = None
+axA0 = None       # first subplot (Alfuy)
 for i, (acc, name, label) in enumerate(target_genomes):
     row, col = i // 3, i % 3
     ax = fig.add_subplot(gs[row, col])
@@ -157,17 +157,23 @@ for i, (acc, name, label) in enumerate(target_genomes):
     if col == 0: ax.set_ylabel('P(ARB)', fontsize=7)
     if row == 1: ax.set_xlabel('Relative position', fontsize=7)
 
-# Line-type legend on the first Panel A subplot: light = raw per-window P(ARB),
-# bold = 3-window smoothed (reviewer comment: needs a legend for light vs solid lines).
-if axA0 is not None:
-    from matplotlib.lines import Line2D
-    _linelegend = [
-        Line2D([0], [0], color='#555555', lw=0.6, alpha=0.4, label='Per-window P(ARB)'),
-        Line2D([0], [0], color='#555555', lw=1.6, label='Smoothed (3-window mean)'),
-    ]
-    axA0.legend(handles=_linelegend, loc='upper left', fontsize=5.0,
-                frameon=True, framealpha=0.85, handlelength=1.6,
-                handletextpad=0.4, borderpad=0.3, labelspacing=0.25)
+# Line-type key (co-author review): thin = raw per-window P(ARB), thick = 3-window
+# smoothed — the single distinction Yao asked to be labelled. Because thin/thick
+# means the same in every subplot (colour separately encodes class: blue ARB /
+# orange ISFV, stated in the titles), ONE shared key is placed OUTSIDE the plotting
+# area, in the margin above Panel A, so it never covers any data trace. Swatches are
+# a neutral dark grey since the key applies to both the blue and orange rows.
+from matplotlib.lines import Line2D
+_linetype_handles = [
+    Line2D([0], [0], color='#333333', lw=0.9, alpha=0.6, label='Per-window P(ARB)'),
+    Line2D([0], [0], color='#333333', lw=1.8, label='Smoothed (3-window mean)'),
+]
+_leg = fig.legend(handles=_linetype_handles, loc='upper center',
+                  bbox_to_anchor=(0.5, 0.955), ncol=2, fontsize=7.5,
+                  frameon=True, framealpha=1.0, handlelength=1.8,
+                  handletextpad=0.5, columnspacing=1.6, borderpad=0.5)
+_fr = _leg.get_frame()
+_fr.set_facecolor('white'); _fr.set_edgecolor('#999999'); _fr.set_linewidth(0.6)
 
 # ───── Panel B: positional enrichment + data-aligned schematic ─────
 ax_b = fig.add_subplot(gs[2, :])

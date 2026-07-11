@@ -51,9 +51,13 @@ C_RAND   = '#969696'
 C_ACC    = '#2171B5'
 C_SP     = '#E6550D'
 C_CHANCE = '#BDBDBD'
-C_DNABERT = '#2171B5'
-C_TFIDF   = '#E6550D'
-C_COMP    = '#31A354'
+# Panel B (methods) palette — deliberately distinct from the CV-scheme
+# blue/orange used in Panels A and C, so a colour never means two things
+# across the figure (per co-author review). Methods form their own family:
+# purple / teal / green.
+C_DNABERT = '#6A51A3'  # purple (was #2171B5 — collided with Accession-grouped)
+C_TFIDF   = '#1B9E9E'  # teal   (was #E6550D — collided with Species-grouped)
+C_COMP    = '#31A354'  # green  (unchanged — already distinct)
 C_MOTIF   = '#756BB1'
 
 # Paths resolved relative to this script so the repo is portable.
@@ -130,8 +134,12 @@ def make_figure2():
         p, r, _ = pr_curve(data[key])
         axB.plot(r, p, color=color, lw=1.2,
                  label=f'{label} (AP = {ap:.3f})')
+    # The position-only baseline performs at exactly chance (AUC = 0.5,
+    # AP = 0.071 = ISFV base rate), so it coincides with this line rather
+    # than forming an informative curve — labelled explicitly per co-author
+    # review so the negative control is represented in this panel too.
     axB.axhline(chance, color=C_CHANCE, lw=0.7, ls=':', zorder=0)
-    axB.text(0.97, chance + 0.02, f'Chance ({chance:.3f})',
+    axB.text(0.97, chance + 0.02, f'Position-only \u2248 Chance ({chance:.3f})',
              fontsize=5.5, color='#666666', ha='right')
     axB.set_xlabel('Recall')
     axB.set_ylabel('Precision')

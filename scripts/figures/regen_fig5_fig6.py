@@ -103,11 +103,17 @@ def make_figure5():
     # Draw dense red (UpA-only) points first, smaller and more transparent, so the
     # sparser blue (CpG-only) and purple (UpA+CpG) points remain visible on top
     # (reviewer comment: blue dots were covered by red).
+    # Markers are kept small so the ~4,000 points do not merge into a solid mass in
+    # the dense diagonal band — at the earlier size (CpG 12 / UpA+CpG 14) the 999 blue
+    # squares overplotted and hid one another (co-author review: shrink the dots so the
+    # scatter is visible). Blue/purple stay larger than red and on top (zorder) to keep
+    # the earlier "blue must not be covered by red" fix; alpha slightly reduced so
+    # overlapping markers read as density rather than an opaque block.
     cat_style = {
-        'Neither':  dict(size=3,  alpha=0.15, zorder=1, edge='none',  elw=0),
-        'UpA only': dict(size=5,  alpha=0.35, zorder=2, edge='none',  elw=0),
-        'UpA+CpG':  dict(size=14, alpha=0.85, zorder=4, edge='white', elw=0.3),
-        'CpG only': dict(size=12, alpha=0.85, zorder=5, edge='white', elw=0.3),
+        'Neither':  dict(size=3, alpha=0.15, zorder=1, edge='none',  elw=0),
+        'UpA only': dict(size=4, alpha=0.35, zorder=2, edge='none',  elw=0),
+        'UpA+CpG':  dict(size=8, alpha=0.80, zorder=4, edge='white', elw=0.3),
+        'CpG only': dict(size=6, alpha=0.70, zorder=5, edge='white', elw=0.3),
     }
     for cat in ['Neither', 'UpA only', 'UpA+CpG', 'CpG only']:
         sub = df[df['category'] == cat]
@@ -234,7 +240,12 @@ def make_figure6():
     keys = ['baseline', 'top5_per_genome', 'random5_per_genome', 'auuagg_containing']
     ap_vals = [_abl[k]['AP_mean'] for k in keys]
     ap_stds = [_abl[k]['AP_std'] for k in keys]
-    colors_abl = [C_DNABERT, C_TFIDF, C_COMP, C_MOTIF]
+    # All four bars are masking CONDITIONS of one DNABERT-2 analysis, not different
+    # methods, and they are all essentially identical (|Δ| < 0.01 pp). A single
+    # neutral grey reflects that (colour carries no information — the x-axis labels
+    # each bar) and avoids reusing the blue/orange that mean "CV scheme" in Panel B
+    # and Figure 2 (co-author review: keep colours consistent across the manuscript).
+    colors_abl = ['#969696', '#969696', '#969696', '#969696']
 
     bars = ax.bar(range(4), ap_vals, yerr=ap_stds, color=colors_abl, edgecolor='white',
                   linewidth=0.5, width=0.6, zorder=3,
@@ -253,8 +264,9 @@ def make_figure6():
         else:
             sign = '+' if delta_pp >= 0 else '−'
             delta_text = f'Δ = {sign}{abs(delta_pp):.3f} pp'
-        # Place above the value label (dark text) so it is always legible
-        ax.text(i, ap_vals[i] + ap_stds[i] + 0.058, delta_text,
+        # Place well above the value label (dark text) so the two don't read as
+        # crowded — extra vertical gap requested in co-author review.
+        ax.text(i, ap_vals[i] + ap_stds[i] + 0.090, delta_text,
                 fontsize=5.5, color='#444444', ha='center', va='bottom',
                 fontweight='bold', rotation=0)
 
@@ -265,47 +277,44 @@ def make_figure6():
     ax.set_title('Window Masking Ablation\n(all |Δ| < 0.01 pp)', fontweight='bold', fontsize=8, pad=6)
     ax.yaxis.grid(True, alpha=0.3, lw=0.5, zorder=0)
 
-    # ── Panel B: Method comparison — now with 4 methods including Motif scorer ──
+    # ── Panel B: Transparent motif scorer under both evaluation schemes ──
+    # Co-author review: the earlier 4-method grouped chart duplicated three bars
+    # (DNABERT-2 / k-mer TF-IDF / Composition) already shown in Figure 2C. Only the
+    # transparent motif scorer was unique to this panel, so 6B now shows JUST that
+    # scorer (accession vs species AP). Its purpose is distinct from 2C: it asks
+    # whether a simple, hand-built classifier assembled from the Figure 5 motifs is
+    # itself discriminative — and whether it, too, degrades under leakage-aware CV.
+    # The learned-method baselines it is compared against live in Figure 2C.
     ax = axes[1]
-    methods = ['DNABERT-2', 'k-mer\nTF-IDF', 'Compo-\nsition', 'Motif\nscorer']
-    method_keys = ['DNABERT-2', 'k-mer TF-IDF', 'Composition', 'Motif scorer (top 50)']
+    mk = 'Motif scorer (top 50)'
+    ap_acc = res[mk]['accession']['ap_mean']; sd_acc = res[mk]['accession']['ap_std']
+    ap_sp  = res[mk]['species']['ap_mean'];   sd_sp  = res[mk]['species']['ap_std']
 
-    ap_acc_vals = [res[k]['accession']['ap_mean'] for k in method_keys]
-    ap_sp_vals  = [res[k]['species']['ap_mean']   for k in method_keys]
-    sd_acc_vals = [res[k]['accession']['ap_std']   for k in method_keys]
-    sd_sp_vals  = [res[k]['species']['ap_std']     for k in method_keys]
-
-    x = np.arange(len(methods))
-    w = 0.32
-    bars_a = ax.bar(x - w/2, ap_acc_vals, w, yerr=sd_acc_vals, color=C_ACC,
-                     edgecolor='white', linewidth=0.5,
-                     error_kw={'lw': 0.8, 'capsize': 2, 'capthick': 0.8},
-                     label='Accession-grouped', zorder=3)
-    bars_s = ax.bar(x + w/2, ap_sp_vals, w, yerr=sd_sp_vals, color=C_SP,
-                     edgecolor='white', linewidth=0.5,
-                     error_kw={'lw': 0.8, 'capsize': 2, 'capthick': 0.8},
-                     label='Species-grouped', zorder=3)
-
-    # Value labels — ALWAYS placed above the error bar whisker to avoid overlap.
-    # Both accession and species labels use the same convention.
-    for i, (bar, val) in enumerate(zip(bars_a, ap_acc_vals)):
-        y_top = val + sd_acc_vals[i] + 0.02
-        ax.text(bar.get_x() + bar.get_width()/2, y_top,
-                f'{val:.3f}', ha='center', va='bottom', fontsize=5.5,
-                fontweight='bold', color='#1a1a1a')
-    for i, (bar, val) in enumerate(zip(bars_s, ap_sp_vals)):
-        y_top = val + sd_sp_vals[i] + 0.02
-        ax.text(bar.get_x() + bar.get_width()/2, y_top,
-                f'{val:.3f}', ha='center', va='bottom', fontsize=5.5,
-                fontweight='bold', color=C_SP)
+    x = np.array([0, 1])
+    bars = ax.bar(x, [ap_acc, ap_sp], width=0.55, yerr=[sd_acc, sd_sp],
+                  color=[C_ACC, C_SP], edgecolor='white', linewidth=0.5,
+                  error_kw={'lw': 0.8, 'capsize': 3, 'capthick': 0.8}, zorder=3)
+    for xi, val, sd, col in [(0, ap_acc, sd_acc, '#1a1a1a'), (1, ap_sp, sd_sp, C_SP)]:
+        ax.text(xi, val + sd + 0.02, f'{val:.3f}', ha='center', va='bottom',
+                fontsize=7, fontweight='bold', color=col)
+    # Leakage-gap annotation: a horizontal dashed reference at the accession level
+    # plus a STRAIGHT vertical arrow down to the species level at the species bar.
+    # (A diagonal arrow between the two bar tops read as a crooked line — co-author
+    # review.) The vertical drop matches the convention used in Figure 2C.
+    drop_pp = (ap_acc - ap_sp) * 100
+    y_ref = ap_acc                      # accession-grouped level
+    ax.plot([0, 1], [y_ref, y_ref], ls='--', color='#C00000', lw=0.8, zorder=4)
+    ax.annotate('', xy=(1, ap_sp), xytext=(1, y_ref),
+                arrowprops=dict(arrowstyle='->', color='#C00000', lw=1.1), zorder=4)
+    ax.text(1.06, (y_ref + ap_sp) / 2, f'\u2212{drop_pp:.1f} pp',
+            ha='left', va='center', fontsize=6.5, color='#C00000', fontweight='bold')
 
     ax.set_xticks(x)
-    ax.set_xticklabels(methods, fontsize=6.5)
+    ax.set_xticklabels(['Accession-\ngrouped', 'Species-\ngrouped'], fontsize=7)
     ax.set_ylabel('Average Precision')
+    ax.set_xlim([-0.6, 1.7])
     ax.set_ylim([0, 1.18])
-    ax.legend(loc='upper center', fontsize=5.5, ncol=2, columnspacing=1.0,
-              bbox_to_anchor=(0.5, 1.0))
-    ax.set_title('Method Comparison\nAcross Evaluation Schemes', fontweight='bold',
+    ax.set_title('Interpretable Motif Scorer\n(top-50 motifs)', fontweight='bold',
                  fontsize=8, pad=4)
     ax.yaxis.grid(True, alpha=0.3, lw=0.5, zorder=0)
 
