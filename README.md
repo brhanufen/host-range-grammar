@@ -219,8 +219,7 @@ If you use this archive, please cite the Zenodo deposit:
 
 > Znabu, B. F., Yao, Q., & Sexton, N. R. (2026). Deciphering the Host-Range Grammar of Orthoflaviviruses Using Foundation Model Embeddings: A Leakage-Aware Evaluation Framework — Data and Code. Zenodo. https://doi.org/10.5281/zenodo.21209701
 
-- Concept DOI (all versions): https://doi.org/10.5281/zenodo.21209701
-- This version: https://doi.org/10.5281/zenodo.21209702
+- Concept DOI (always resolves to the latest version): https://doi.org/10.5281/zenodo.21209701
 
 The associated manuscript citation will be added upon publication.
 
