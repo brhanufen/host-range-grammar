@@ -147,9 +147,10 @@ ax.axhline(null_mean, color='#999999', ls='--', lw=1.0, label=f'Null\n{null_mean
 for bar, val in zip(bars, [purity, sil]):
     ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
             f'{val:.3f}', ha='center', va='bottom', fontsize=9, fontweight='bold')
-# Z-score and p annotation
-ax.text(0, 1.10, '***\nP < 0.001',
-        ha='center', va='bottom', fontsize=7, color='black')
+# Z-score and p annotation (anchored from the top so the stars sit a little
+# below the top axis edge rather than crammed against it)
+ax.text(0, 1.15, '***\nP < 0.001',
+        ha='center', va='top', fontsize=7, color='black')
 ax.set_ylabel('Score', fontsize=9)
 ax.set_ylim([0, 1.20])
 ax.legend(loc='center right', fontsize=6.5, frameon=True)

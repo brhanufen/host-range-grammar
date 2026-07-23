@@ -79,7 +79,10 @@ def make_figure5():
     df.loc[(df['n_UpA'] > 0) & (df['n_CpG'] > 0), 'category'] = 'UpA+CpG'
 
     # Colorblind-distinguishable palette + shape coding for robustness:
-    # UpA-only = red circle, CpG-only = blue square, UpA+CpG = purple triangle, Neither = grey dot
+    # 2nd-round co-author review: use ONE marker shape (circle) for every category so
+    # the four groups are distinguished by COLOUR ALONE — the legend was previously a
+    # mix of circle / square / triangle / dot, which Yao asked to unify. Colour is
+    # sufficient (UpA-only red, CpG-only blue, UpA+CpG purple, Neither grey).
     cat_colors = {
         'UpA only': '#D62728',
         'CpG only': '#2171B5',
@@ -88,9 +91,9 @@ def make_figure5():
     }
     cat_markers = {
         'UpA only': 'o',
-        'CpG only': 's',
-        'UpA+CpG': '^',
-        'Neither': '.',
+        'CpG only': 'o',
+        'UpA+CpG': 'o',
+        'Neither': 'o',
     }
 
     # Aspect ratio 1.67:1 (7.5×4.5") for vertical breathing room — panels were
@@ -105,15 +108,16 @@ def make_figure5():
     # (reviewer comment: blue dots were covered by red).
     # Markers are kept small so the ~4,000 points do not merge into a solid mass in
     # the dense diagonal band — at the earlier size (CpG 12 / UpA+CpG 14) the 999 blue
-    # squares overplotted and hid one another (co-author review: shrink the dots so the
-    # scatter is visible). Blue/purple stay larger than red and on top (zorder) to keep
-    # the earlier "blue must not be covered by red" fix; alpha slightly reduced so
-    # overlapping markers read as density rather than an opaque block.
+    # squares overplotted and hid one another. 2nd-round co-author review: shrink the
+    # dots further so more of the scatter is visible and hidden points are revealed.
+    # The relative ordering is preserved (Blue/purple stay larger than red and on top
+    # via zorder) to keep the earlier "blue must not be covered by red" fix; edge
+    # linewidths are thinned in step with the smaller markers.
     cat_style = {
-        'Neither':  dict(size=3, alpha=0.15, zorder=1, edge='none',  elw=0),
-        'UpA only': dict(size=4, alpha=0.35, zorder=2, edge='none',  elw=0),
-        'UpA+CpG':  dict(size=8, alpha=0.80, zorder=4, edge='white', elw=0.3),
-        'CpG only': dict(size=6, alpha=0.70, zorder=5, edge='white', elw=0.3),
+        'Neither':  dict(size=1.2, alpha=0.15, zorder=1, edge='none', elw=0),
+        'UpA only': dict(size=1.6, alpha=0.40, zorder=2, edge='none', elw=0),
+        'UpA+CpG':  dict(size=3.0, alpha=0.85, zorder=4, edge='none', elw=0),
+        'CpG only': dict(size=2.2, alpha=0.75, zorder=5, edge='none', elw=0),
     }
     for cat in ['Neither', 'UpA only', 'UpA+CpG', 'CpG only']:
         sub = df[df['category'] == cat]
@@ -131,10 +135,28 @@ def make_figure5():
     label_positions = {
         'ATTAGG': (0.20, 3.40),
         'CCCTTT': (0.55, 3.05),
-        'AGAGAG': (0.78, 2.60),
+        # AGAGAG's point sits far right (prevalence 0.68); anchor the label in the
+        # open whitespace ABOVE the point so it stays inside Panel A and does not
+        # crowd Panel B's boundary / tick labels (2nd-round review).
+        'AGAGAG': (0.70, 1.55),
         'TACTCC': (0.50, 2.05),
         'TAGTAT': (0.05, 2.30),
     }
+    # Emphasise the five LABELLED points so they stand out from the background
+    # cloud (especially the pale-grey "Neither" motifs like AGAGAG): redraw each at
+    # full opacity with a thin dark outline, on top of everything (2nd-round review).
+    for _, row in top5.iterrows():
+        motif_name = row['motif']
+        if motif_name not in label_positions:
+            continue
+        cat = ('UpA+CpG' if (row['n_UpA'] > 0 and row['n_CpG'] > 0)
+               else 'UpA only' if row['n_UpA'] > 0
+               else 'CpG only' if row['n_CpG'] > 0
+               else 'Neither')
+        ax.scatter(row['top_prev'], row['log2_enrichment'],
+                   s=6, c=cat_colors[cat], marker='o', alpha=1.0,
+                   edgecolors='#333333', linewidths=0.4, zorder=6)
+
     for _, row in top5.iterrows():
         motif_name = row['motif']
         if motif_name not in label_positions:

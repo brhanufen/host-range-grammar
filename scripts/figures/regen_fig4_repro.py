@@ -127,7 +127,7 @@ def draw_schematic_in_axes(ax, y0, h, fontsize=5.5):
 # === Build figure ===
 fig = plt.figure(figsize=(7.5, 9.5))
 gs = fig.add_gridspec(4, 3, height_ratios=[1, 1, 1.6, 1.8],
-                     hspace=0.70, wspace=0.32)
+                     hspace=0.95, wspace=0.32)
 
 # ───── Panel A: 6 P(ARB) tracks ─────
 target_genomes = [
@@ -138,12 +138,15 @@ target_genomes = [
     ('JQ308185', 'Chaoyang virus (HLD115)', 'ISFV'),
     ('MW246770', 'Chaoyang virus (NM)', 'ISFV'),
 ]
-axA0 = None       # first subplot (Alfuy)
+axA0 = None       # first subplot (Alfuy, top-left)
+axA_bot = None    # first subplot of bottom row (Nanay, i==3)
 for i, (acc, name, label) in enumerate(target_genomes):
     row, col = i // 3, i % 3
     ax = fig.add_subplot(gs[row, col])
     if i == 0:
         axA0 = ax
+    if i == 3:
+        axA_bot = ax
     genome = df[df.accession == acc].sort_values('pos_rel')
     if len(genome) == 0:
         continue
@@ -157,23 +160,38 @@ for i, (acc, name, label) in enumerate(target_genomes):
     if col == 0: ax.set_ylabel('P(ARB)', fontsize=7)
     if row == 1: ax.set_xlabel('Relative position', fontsize=7)
 
-# Line-type key (co-author review): thin = raw per-window P(ARB), thick = 3-window
-# smoothed — the single distinction Yao asked to be labelled. Because thin/thick
-# means the same in every subplot (colour separately encodes class: blue ARB /
-# orange ISFV, stated in the titles), ONE shared key is placed OUTSIDE the plotting
-# area, in the margin above Panel A, so it never covers any data trace. Swatches are
-# a neutral dark grey since the key applies to both the blue and orange rows.
+# Line-type key (2nd-round co-author review): thin = raw per-window P(ARB),
+# thick = 3-window smoothed. Yao asked for TWO colour-matched keys — one blue for
+# the top (ARB) row, one red for the bottom (ISFV) row — instead of a single neutral
+# grey key, so each key's colour ties directly to the traces it describes and
+# reinforces the blue = ARB / orange = ISFV encoding used throughout the manuscript.
+# The wording is identical in both (the y-axis is P(ARB) in every subplot; a good
+# ISFV genome simply scores low P(ARB)). Each key is placed OUTSIDE the plotting
+# area, in the margin just above its own row, so it never covers any data trace.
 from matplotlib.lines import Line2D
-_linetype_handles = [
-    Line2D([0], [0], color='#333333', lw=0.9, alpha=0.6, label='Per-window P(ARB)'),
-    Line2D([0], [0], color='#333333', lw=1.8, label='Smoothed (3-window mean)'),
-]
-_leg = fig.legend(handles=_linetype_handles, loc='upper center',
-                  bbox_to_anchor=(0.5, 0.955), ncol=2, fontsize=7.5,
-                  frameon=True, framealpha=1.0, handlelength=1.8,
-                  handletextpad=0.5, columnspacing=1.6, borderpad=0.5)
-_fr = _leg.get_frame()
-_fr.set_facecolor('white'); _fr.set_edgecolor('#999999'); _fr.set_linewidth(0.6)
+def _linetype_handles(colour):
+    return [
+        Line2D([0], [0], color=colour, lw=0.9, alpha=0.6, label='Per-window P(ARB)'),
+        Line2D([0], [0], color=colour, lw=1.8, label='Smoothed (3-window mean)'),
+    ]
+# anchor each key ABOVE its row's two-line subplot titles so it never covers a
+# title or trace. The title top sits ~0.055 fig-fraction above each row's axes;
+# place the legend's bottom just above that.
+fig.canvas.draw()
+# Yao (2nd round): TWO colour-matched keys, one per row, placed BELOW their row of
+# three subplots (blue key under the top ARB row, red key under the bottom ISFV row)
+# so each key hangs beneath the figures it describes and never covers a trace/title.
+# The top key sits in the widened inter-row band; the bottom key sits below the
+# bottom row's "Relative position" x-label, clear of Panel B beneath.
+_top_y0 = axA0.get_position().y0     # bottom edge of top-row axes
+_bot_y0 = axA_bot.get_position().y0  # bottom edge of bottom-row axes
+for _handles_colour, _yanchor, _gap in [(C_ARB, _top_y0, 0.030), (C_ISV, _bot_y0, 0.055)]:
+    _leg = fig.legend(handles=_linetype_handles(_handles_colour), loc='upper center',
+                      bbox_to_anchor=(0.5, _yanchor - _gap), ncol=2, fontsize=7.0,
+                      frameon=True, framealpha=1.0, handlelength=1.8,
+                      handletextpad=0.5, columnspacing=1.4, borderpad=0.4)
+    _fr = _leg.get_frame()
+    _fr.set_facecolor('white'); _fr.set_edgecolor('#999999'); _fr.set_linewidth(0.6)
 
 # ───── Panel B: positional enrichment + data-aligned schematic ─────
 ax_b = fig.add_subplot(gs[2, :])

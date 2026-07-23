@@ -114,13 +114,15 @@ def make_figure2():
         axA.plot(r, p, color=color, lw=1.2,
                  label=f'{label} (AP = {ap:.3f})')
     axA.axhline(chance, color=C_CHANCE, lw=0.7, ls=':', zorder=0)
-    axA.text(0.97, chance + 0.02, f'Chance ({chance:.3f})',
+    axA.text(0.97, chance + 0.02, f'Position-only \u2248 Chance ({chance:.3f})',
              fontsize=5.5, color='#666666', ha='right')
     axA.set_xlabel('Recall')
     axA.set_ylabel('Precision')
     axA.set_xlim([0, 1])
     axA.set_ylim([0, 1.05])
-    axA.legend(loc='lower left', fontsize=5.5, handletextpad=0.5, labelspacing=0.6)
+    # Legend raised off the bottom so it no longer overlaps the dashed chance line
+    axA.legend(loc='center left', bbox_to_anchor=(0.0, 0.45),
+               fontsize=5.5, handletextpad=0.5, labelspacing=0.6)
     axA.set_title('DNABERT-2:\nEffect of Evaluation Scheme',
                   fontweight='bold', fontsize=8, pad=4)
 
